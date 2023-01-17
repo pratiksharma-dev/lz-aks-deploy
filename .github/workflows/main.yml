@@ -1,0 +1,20 @@
+name: Deploy AKS-Construction
+
+on:
+  workflow_dispatch:
+
+jobs:
+  reusable_workflow_job:
+    uses: Azure/AKS-Construction/.github/workflows/AKSC_Deploy.yml@0.9.7
+    with:
+      templateVersion: 0.9.7
+      rg: az-k8s-hmjn-poc-rg
+      resourceName: az-k8s-hmjnpoc
+      templateParams: resourceName=az-k8s-hmjnpoc upgradeChannel=stable agentCountMax=20 custom_vnet=true vnetAksSubnetAddressPrefix=10.240.0.0/24 enable_aad=true AksDisableLocalAccounts=true enableAzureRBAC=true adminPrincipalId=_USER_OBJECT_ID_ registries_sku=Premium acrPushRolePrincipalId=_USER_OBJECT_ID_ imageNames=["k8s.gcr.io/external-dns/external-dns:v0.11.0"] privateLinks=true keyVaultIPAllowlist=["24.16.43.12/32"] enablePrivateCluster=true fileCSIDriver=false diskCSIDriver=false dnsZoneId=/subscriptions/daaad427-15a9-4542-9bdd-9d603751cab4/resourceGroups/dns-rg/providers/Microsoft.Network/privateDnsZones/poc-aks.com keyVaultAksCSI=true keyVaultCreate=true keyVaultOfficerRolePrincipalId=_USER_OBJECT_ID_ fluxGitOpsAddon=true networkPluginMode=Overlay ebpfDataplane=cilium
+      postScriptInvokeCommand: true
+      postScriptParams: "ingress=nginx,dnsZoneId=/subscriptions/daaad427-15a9-4542-9bdd-9d603751cab4/resourceGroups/dns-rg/providers/Microsoft.Network/privateDnsZones/poc-aks.com,certEmail=pratik.s.sharma@outlook.com,monitor=oss,enableMonitorIngress=true"
+    secrets:
+      AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+      AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+      AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      USER_OBJECT_ID: ${{ secrets.USER_OBJECT_ID }}
